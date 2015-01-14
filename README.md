@@ -1,6 +1,8 @@
 # falcon-ng-demo
 BITS Angular JS talk and demo. 
 
+###### Angular JS app running on top of falcon.
+
 Installing
 ----
 
