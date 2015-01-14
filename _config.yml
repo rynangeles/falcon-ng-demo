@@ -1,0 +1,4 @@
+markdown : redcarpet
+baseurl : /ng-gridify
+source : build/jekyll
+exclude : []

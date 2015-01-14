@@ -1,0 +1,23 @@
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+}
+
+.nested-view {
+  margin-top: 8px;
+}
+
+.todo-view .item {
+  display: inline-block;
+  margin: 0;
+  vertical-align: top;
+}
+.todo-view .item.item-label {
+  width: 18%;
+  text-align: right;
+}
+.todo-view .item.item-data {
+  width: 80%;
+  margin-left: 1%;
+}
+
+/*# sourceMappingURL=main.css.map */
