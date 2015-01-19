@@ -30,6 +30,7 @@ class Todo:
         todo = self.collection.insert(deserialize)
         res.status = falcon.HTTP_201
         res.location = '/api/todos?id=%s' % (todo)
+        res.body = dumps(self.collection.find_one({'_id':todo}))
 
     def on_put(self, req, res):
         id = req.get_param('id') or ""

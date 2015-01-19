@@ -90,21 +90,48 @@ controller('TodoController', ['$scope', '$stateParams', '$state', 'TodoService',
 		$scope.$state = $state;
 		$scope.todos = TodoService.query(); // fetch all todos. Issue a GET to /api/todos
 		$scope.deleteTodo = function(todo){
-			todo.$delete({id:todo._id.$oid}, function(){
-				$state.go('todos', {}, {reload: true}); // on success go back to home i.e. todos state.
-				alert("Todo successfully deleted!");
-			});
+			var todoIndex = $scope.todos.indexOf(todo);
+			if (todoIndex !== -1){
+				todo.$delete({id:todo._id.$oid}, function(){
+					$scope.todos.splice(todoIndex, 1);
+					$state.go('todos'); // on success go back to home i.e. todos state.
+					alert("Todo successfully deleted!");
+				});
+			}
 		};
 	}
 ]).
-controller('TodoViewController', ['$scope', '$stateParams', 'TodoService', 
-	function ($scope, $stateParams, TodoService) {
+controller('TodoViewController', ['$scope', '$state', '$stateParams', 'TodoService', 
+	function ($scope, $state, $stateParams, TodoService) {
+		/*
 		$scope.todo = TodoService.get({ id: $stateParams.id }); // get a single todo. Issues a GET to /api/todos/:id
+		*/
+		$scope.todo = {};
+		$scope.todos.$promise.then(function (todos){
+			var todo = todos.filter(function(todo){ return todo._id.$oid === $stateParams.id; });
+			if (todo.length > 0){
+				$scope.todo = todo[0];
+			}else{
+				$state.go('todos');
+			}
+		});
 		$scope.deleteTodo = function(todo){
+			/*
 			todo.$delete({id:todo._id.$oid}, function(){
 				$state.go('todos', {}, {reload: true}); // on success go back to home i.e. todos state.
 				alert("Todo successfully deleted!");
 			});
+			*/
+			var todoIndex = $scope.todos.indexOf(todo);
+			if (todoIndex !== -1){
+				todo.$delete({id:todo._id.$oid}, function(){
+					$scope.todos.splice(todoIndex, 1);
+					$state.go('todos'); // on success go back to home i.e. todos state.
+					alert("Todo successfully deleted!");
+				});
+			}else{
+				$state.go('todos');
+			}
 		}
 	}
 ]).
@@ -112,9 +139,11 @@ controller('TodoCreateController', ['$scope', '$stateParams', '$state', 'TodoSer
 	function ($scope, $stateParams, $state, TodoService) {
 		$scope.todo = new TodoService();  //create new todo instance. Properties will be set via ng-model on UI
 		$scope.addTodo = function (){
-			$scope.todo.$save(function() {
+			$scope.todo.$save(function(todo) {
+				$scope.todo._id = todo._id;
+				$scope.todos.push($scope.todo);
 				alert("Todo successfully created!");
-				$state.go('todos', {}, {reload: true}); // on success go back to home i.e. todos state.
+				$state.go('todos'); // on success go back to home i.e. todos state.
 			});
 		};
 	}
@@ -122,14 +151,25 @@ controller('TodoCreateController', ['$scope', '$stateParams', '$state', 'TodoSer
 controller('TodoEditController', ['$scope', '$stateParams', '$state', 'TodoService', 
 	function ($scope, $stateParams, $state, TodoService) {
 		$scope.todo = {}
-		TodoService.get({ id: $stateParams.id }).$promise.then(function(data){
-			$scope.todo = data;
-			$scope.todo.targetDate = new Date(data.targetDate);
+		/*
+		TodoService.get({ id: $stateParams.id }).$promise.then(function(todo){
+			$scope.todo = todo;
+			$scope.todo.targetDate = new Date(todo.targetDate);
 		}); // get a single todo. Issues a GET to /api/todos/:id
+		*/
+		$scope.todos.$promise.then(function (todos){
+			var todo = todos.filter(function(todo){ return todo._id.$oid === $stateParams.id; });
+			if (todo.length > 0){
+				$scope.todo = todo[0];
+				$scope.todo.targetDate = new Date($scope.todo.targetDate);
+			}else{
+				$state.go('todos');
+			}
+		});
 		$scope.updateTodo = function (){
 			$scope.todo.$update({id:$scope.todo._id.$oid}, function() {
 				alert("Todo successfully updated!");
-				$state.go('todos', {}, {reload: true}); // on success go back to home i.e. todos state.
+				$state.go('todos'); // on success go back to home i.e. todos state.
 			});
 		};
 	}
