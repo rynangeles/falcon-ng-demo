@@ -12,7 +12,7 @@
 		</thead>
 		<tbody>
 			<tr ng-repeat="todo in todos">
-				<td>{{todo.title}}</td>
+				<td><s ng-show="todo.completed">{{todo.title}}</s><span ng-hide="todo.completed">{{todo.title}}</span></td>
 				<td class="text-right">
 					<a class="btn btn-primary btn-xs" ui-sref="todos.view({id:todo._id.$oid})"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View</a>
 					<a class="btn btn-danger btn-xs" ng-confirm="deleteTodo(todo)" ng-confirm-message="Are you sure you want to delete {{todo.title}}?"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
